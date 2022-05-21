@@ -16,7 +16,9 @@ class InlineChunkHtmlPlugin {
         if (asset == null) {
             return tag;
         }
-        return { tagName: 'script', innerHTML: asset.source(), closeTag: true };
+        // Replaces "<script>" or "</script>" to "<" + "script>" or "<" + "/script>".
+        const source = asset.source().replace(/<(\/?script)/g, (_: string, s: string) => `<" + "${s}`);
+        return { tagName: 'script', innerHTML: source, closeTag: true };
     }
 
     apply(compiler: { options: { output: { publicPath: string; }; }; hooks: { compilation: { tap: (arg0: string, arg1: (compilation: any) => void) => void; }; }; }) {
